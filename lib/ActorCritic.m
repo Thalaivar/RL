@@ -21,8 +21,8 @@ classdef ActorCritic
             obj.phi_ = rl_params.regressor_func;
             obj.critic_lr_ = rl_params.critic_lr;
             obj.actor_lr_ = rl_params.actor_lr;
-            obj.F1_ = rl_params.actor_F1;
-            obj.F2_ = rl_params.actor_F2;
+%             obj.F1_ = rl_params.actor_F1;
+%             obj.F2_ = rl_params.actor_F2;
             obj.Q_ = rl_params.Q;
             obj.R_ = rl_params.R;
             obj.nw_ = nw;
@@ -93,11 +93,12 @@ end
 
 function n = noise(t)
     global t_prev;
-    if round(t - t_prev) > 3
-        n = randn(1);
+    if round(t - t_prev) > 3 && t <= 700
+        n = rand(1);
+%         n = 1*exp(-0.009*t)*(sin(t)^2*cos(t)+sin(2*t)^2*cos(0.1*t)+sin(-1.2*t)^2*cos(0.5*t)+sin(t)^5+sin(1.12*t)^2+cos(2.4*t)*sin(2.4*t)^3);
+        t_prev = t;
     else
         n = 0;
     end
-    t_prev = t;
 %     n = 1*exp(-0.009*t)*(sin(t)^2*cos(t)+sin(2*t)^2*cos(0.1*t)+sin(-1.2*t)^2*cos(0.5*t)+sin(t)^5+sin(1.12*t)^2+cos(2.4*t)*sin(2.4*t)^3);
 end
