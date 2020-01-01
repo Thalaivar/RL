@@ -8,9 +8,9 @@ function dy = simulate_system(t, y, ac)
     
     add_noise = 1;
     
-%     if ac.check_tuning_params(t, x, 0.5, add_noise) == 0
-%         warning('Tuning params check failed!\n');
-%     end
+    if ac.check_tuning_params(t, x, 0.5, add_noise) == 0
+        warning('Tuning params check failed!\n');
+    end
     
     [u, critic_weight_update, actor_weight_update] = ac.update_actor_critic(t, x, add_noise);
     

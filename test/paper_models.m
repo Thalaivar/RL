@@ -1,27 +1,27 @@
 addpath('../lib/')
 
-nw = 3;
+nw = 6;
 
 % define parameters for Actor Critic
 rl_params.nw = nw;
 rl_params.regressor_func = @regressor_func;
 rl_params.critic_lr = 0.1;
-rl_params.actor_lr = 1;
-% rl_params.actor_F1 = 0.001*ones(nw,1);
-% rl_params.actor_F2 = 100*eye(nw);
+rl_params.actor_lr = 0.01;
+rl_params.actor_F1 = ones(nw,1);
+rl_params.actor_F2 = 1*eye(nw);
 rl_params.Q = @Q;
 rl_params.R = 1;
 
 % dynamics of system
-nx = 2;
-dynamics.f = @nonlinear_plant_f;
-dynamics.G = @nonlinear_plant_G;
+nx = 3;
+dynamics.f = @linear_plant_f;
+dynamics.G = @linear_plant_G;
 dynamics.nx = nx;
 
 ac = ActorCritic(rl_params, dynamics);
 
-tspan = [0, 800];
-x0 = [1; 1];
+tspan = [0, 1000];
+x0 = [1; 1; 1];
 options = odeset('OutputFcn', @odeplot);
 [t,y] = ode15s(@(t,y) simulate_system(t, y, ac), tspan, [x0;ac.critic_weight_;ac.actor_weight_], options); 
 
@@ -79,12 +79,15 @@ function Qx = Q(x)
 end
 
 function [phi, dphi] = regressor_func(x)
-    x1 = x(1,1); x2 = x(2,1);
+    x1 = x(1,1); x2 = x(2,1); x3 = x(3,1);
 
-    phi = [x1^2; x1*x2; x2^2;];
-    dphi = [2*x1,    0; 
-              x2,   x1; 
-               0, 2*x2]; 
+    phi = [x1^2; x1*x2; x2^2; x3^2; x1*x3; x2*x3];
+    dphi = [2*x1,    0,    0; 
+              x2,   x1,    0; 
+               0, 2*x2,    0;
+               0,    0, 2*x3;
+              x3,    0,   x1;
+               0,   x3,   x2]; 
 end
 
 function f = linear_plant_f(x)
